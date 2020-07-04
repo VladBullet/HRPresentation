@@ -12,6 +12,10 @@ using HRPresentation.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using LazZiya.ExpressLocalization;
+using System.Globalization;
+using HRPresentation.LocalizationResources;
+using Microsoft.AspNetCore.Localization;
 
 namespace HRPresentation
 {
@@ -33,7 +37,23 @@ namespace HRPresentation
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            var cultures = new List<CultureInfo>
+                {
+                    new CultureInfo("ro"),
+                    new CultureInfo("en"),
+                };
+            services.AddRazorPages()
+                .AddExpressLocalization<ExpressLocalizationResource, ViewLocalizationResource>(
+                ops =>
+                {
+                    ops.ResourcesPath = "LocalizationResources";
+                    ops.RequestLocalizationOptions = o =>
+                    {
+                        o.DefaultRequestCulture = new RequestCulture("ro", "ro");
+                        o.SupportedCultures = cultures;
+                        o.SupportedUICultures = cultures;
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +70,7 @@ namespace HRPresentation
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseRequestLocalization();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

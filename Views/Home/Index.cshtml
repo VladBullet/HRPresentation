@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+    <language-nav cookie-handler-url="@Url.Page("/Index", "SetCultureCookie", new { area="", cltr="{0}", returnUrl="{1}" })"></language-nav>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
